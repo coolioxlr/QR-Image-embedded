@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include "QR_Encode.h"
 
-
 int m_nLevel;
 int QR_m_nVersion;
 int m_nMaskingNo;
@@ -588,12 +587,8 @@ static int nIndicatorLenKanji[]	   = { 8, 10, 12};
 
 int IsNumeralData(unsigned char c)
 {
-	if (c >= '0' && c <= '9')
-		return 1;
-
-	return 0;
+	return c >= '0' && c <= '9';
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 // APPLICATIONS: Check the appropriate alphanumeric mode
