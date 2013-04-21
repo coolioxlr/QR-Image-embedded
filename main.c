@@ -35,8 +35,8 @@ int main(int argc, char *argv[])
   
   // **** This calls the library and encodes the data
   // *** length is taken from NULL termination, however can also be passed by parameter.
-  BYTE QR_m_data[3917]; //max possible bits resolution 177*177/8+1
-  int QR_width=EncodeData(3,version,argv[1],0,QR_m_data);
+  BYTE QR_m_data[MAX_BITDATA]; //max possible bits resolution 177*177/8+1
+  int QR_width=EncodeData(level,version,argv[1],0,QR_m_data);
 
   // Write the data to the output file
   FILE *f=fopen(argv[2],"w");
