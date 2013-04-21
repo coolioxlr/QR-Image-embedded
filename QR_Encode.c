@@ -608,6 +608,9 @@ int IsAlphabetData(unsigned char c)
 	if (c >= 'A' && c <= 'Z')
 		return 1;
 
+	if (c >= 'a' && c <= 'z')
+		return 1;
+
 	if (c == ' ' || c == '$' || c == '%' || c == '*' || c == '+' || c == '-' || c == '.' || c == '/' || c == ':')
 		return 1;
 
@@ -645,6 +648,8 @@ BYTE AlphabetToBinary(unsigned char c)
 	if (c >= '0' && c <= '9') return (unsigned char)(c - '0');
 
 	if (c >= 'A' && c <= 'Z') return (unsigned char)(c - 'A' + 10);
+
+	if (c >= 'a' && c <= 'z') return (unsigned char)(c - 'a' + 10);
 
 	if (c == ' ') return 36;
 
