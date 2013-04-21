@@ -2,7 +2,9 @@
  * QR_Encode.h
  *
  *  Created on: Jan 18, 2012
- *      Author: swex
+ *      Original Author: swex
+ *  Forked on 21 April 2013
+ *      Updates by ksasq
  */
 
 #include <string.h>
