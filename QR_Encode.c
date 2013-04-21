@@ -4,13 +4,8 @@
 int m_nLevel;
 int QR_m_nVersion;
 int m_nMaskingNo;
-
-int m_ncDataCodeWordBit,m_ncAllCodeWord, nEncodeVersion;
-
+int m_ncDataCodeWordBit, m_ncAllCodeWord, nEncodeVersion;
 int m_ncDataBlock;
-
-//BYTE m_byRSWork[MAX_CODEBLOCK]; //RS code word calculation work
-
 int m_nSymbolSize;
 
 static QR_VERSIONINFO QR_VersionInfo[] = {{0}, // (Ver.0)
@@ -737,9 +732,6 @@ int GetBitLength(BYTE nMode, int ncData, int nVerGroup)
 	return ncBits;
 }
 
-
-
-
 int EncodeSourceData(LPCSTR lpsSource, int ncLength, int nVerGroup,int m_nBlockLength[MAX_DATACODEWORD],BYTE m_byBlockMode[MAX_DATACODEWORD],BYTE m_byDataCodeWord[MAX_DATACODEWORD])
 {
 
@@ -1144,14 +1136,11 @@ int EncodeSourceData(LPCSTR lpsSource, int ncLength, int nVerGroup,int m_nBlockL
 	return (m_ncDataCodeWordBit != -1);
 }
 
-
 /////////////////////////////////////////////////////////////////////////////
 // APPLICATIONS: To get the bit length
 // Args: data mode type, data length, group version (model number)
 // Returns: data bit length
 // Remarks: data length of argument in Kanji mode is the number of bytes, not characters
-
-
 
 int GetEncodeVersion(int nVersion, LPCSTR lpsSource, int ncLength,int m_nBlockLength[MAX_DATACODEWORD],BYTE m_byBlockMode[MAX_DATACODEWORD],BYTE m_byDataCodeWord[MAX_DATACODEWORD])
 {
@@ -1214,7 +1203,6 @@ void GetRSCodeWord(LPBYTE lpbyRSWork, int ncDataCodeWord, int ncRSCodeWord)
 
 			for (j = 0; j < ncRSCodeWord; ++j)
 			{
-
 				//Add (% 255  ^ 255 = 1) the first term multiplier to multiplier sections
 				BYTE nExpElement = (BYTE)(((int)(byRSExp[ncRSCodeWord][j] + nExpFirst)) % 255);
 
@@ -1223,14 +1211,12 @@ void GetRSCodeWord(LPBYTE lpbyRSWork, int ncDataCodeWord, int ncRSCodeWord)
 				lpbyRSWork[j] = (BYTE)(lpbyRSWork[j + 1] ^ byExpToInt[nExpElement]);
 			}
 
-
 			//Shift the remaining digits
 			for (j = ncRSCodeWord; j < ncDataCodeWord + ncRSCodeWord - 1; ++j)
 				lpbyRSWork[j] = lpbyRSWork[j + 1];
 		}
 		else
 		{
-
 			//Shift the remaining digits
 			for (j = 0; j < ncDataCodeWord + ncRSCodeWord - 1; ++j)
 				lpbyRSWork[j] = lpbyRSWork[j + 1];
@@ -1763,10 +1749,7 @@ void putBitToPos(unsigned int pos,int bw,unsigned char *bits)
 
 int EncodeData(int nLevel, int nVersion , LPCSTR lpsSource, unsigned sourcelen, unsigned char QR_m_data[])
 {
-
-
 	int i, j;
-
 	int bAutoExtent=0;
 	BYTE m_byModuleData[MAX_MODULESIZE][MAX_MODULESIZE]; // [x][y]
 	BYTE m_byAllCodeWord[MAX_ALLCODEWORD];
@@ -1781,58 +1764,46 @@ int EncodeData(int nLevel, int nVersion , LPCSTR lpsSource, unsigned sourcelen, 
 	// If the data length is not specified, acquired by lstrlen
 	int ncLength = sourcelen > 0 ? sourcelen : strlen(lpsSource);
 
-	if (ncLength == 0)
+	if (ncLength == 0) {
 		return -1; // No data
-
+	}
 
 	// Check version (model number)
+  nEncodeVersion = GetEncodeVersion(nVersion, lpsSource, ncLength, m_nBlockLength, m_byBlockMode,m_byDataCodeWord);
 
-	 nEncodeVersion = GetEncodeVersion(nVersion, lpsSource, ncLength, m_nBlockLength, m_byBlockMode,m_byDataCodeWord);
+	if (nEncodeVersion == 0) {
+		return -1;  // Over-capacity
+  }
 
-	if (nEncodeVersion == 0)
-		return -1;
-			// Over-capacity
-	if (nVersion == 0)
-	{
-
+	if (nVersion == 0) {
 		// Auto Part
 		QR_m_nVersion = nEncodeVersion;
-	}
-	else
-	{
-		if (nEncodeVersion <= nVersion)
-		{
+  } else {
+		if (nEncodeVersion <= nVersion) {
 			QR_m_nVersion = nVersion;
-		}
-		else
-		{
-			if (bAutoExtent)
+		} else {
+			if (bAutoExtent) {
 				QR_m_nVersion = nEncodeVersion;   // Automatic extended version (model number)
-			else
+			} else {
 				return -1;  // Over-capacity
+			}
 		}
 	}
-
 
 	// Terminator addition code "0000"
 	int ncDataCodeWord = QR_VersionInfo[QR_m_nVersion].ncDataCodeWord[nLevel];
+  int ncTerminater = min(4, (ncDataCodeWord * 8) - m_ncDataCodeWordBit);
 
-	int ncTerminater = min(4, (ncDataCodeWord * 8) - m_ncDataCodeWordBit);
-
-	if (ncTerminater > 0)
+	if (ncTerminater > 0) {
 		m_ncDataCodeWordBit = SetBitStream(m_ncDataCodeWordBit, 0, ncTerminater,m_byDataCodeWord);
-
+  }
 
 	// Additional padding code "11101100, 00010001"
 	BYTE byPaddingCode = 0xec;
-
-	for (i = (m_ncDataCodeWordBit + 7) / 8; i < ncDataCodeWord; ++i)
-	{
+	for (i = (m_ncDataCodeWordBit + 7) / 8; i < ncDataCodeWord; ++i) {
 		m_byDataCodeWord[i] = byPaddingCode;
-
 		byPaddingCode = (BYTE)(byPaddingCode == 0xec ? 0x11 : 0xec);
 	}
-
 
 	// Calculated the total clear area code word
 	m_ncAllCodeWord = QR_VersionInfo[QR_m_nVersion].ncAllCodeWord;
@@ -1841,83 +1812,53 @@ int EncodeData(int nLevel, int nVersion , LPCSTR lpsSource, unsigned sourcelen, 
 
 	int nDataCwIndex = 0; 	 // Position data processing code word
 
-
 	// Division number data block
 	int ncBlock1 = QR_VersionInfo[QR_m_nVersion].RS_BlockInfo1[nLevel].ncRSBlock;
-
 	int ncBlock2 = QR_VersionInfo[QR_m_nVersion].RS_BlockInfo2[nLevel].ncRSBlock;
-
 	int ncBlockSum = ncBlock1 + ncBlock2;
-
-
 	int nBlockNo = 0;			  // Block number in the process
-
 
 	// The number of data code words by block
 	int ncDataCw1 = QR_VersionInfo[QR_m_nVersion].RS_BlockInfo1[nLevel].ncDataCodeWord;
-
 	int ncDataCw2 = QR_VersionInfo[QR_m_nVersion].RS_BlockInfo2[nLevel].ncDataCodeWord;
 
-
 	// Code word interleaving data placement
-	for (i = 0; i < ncBlock1; ++i)
-	{
-		for (j = 0; j < ncDataCw1; ++j)
-		{
+	for (i = 0; i < ncBlock1; ++i) {
+		for (j = 0; j < ncDataCw1; ++j) {
 			m_byAllCodeWord[(ncBlockSum * j) + nBlockNo] = m_byDataCodeWord[nDataCwIndex++];
-
 		}
-
 		++nBlockNo;
 	}
 
-
-	for (i = 0; i < ncBlock2; ++i)
-	{
-		for (j = 0; j < ncDataCw2; ++j)
-		{
-			if (j < ncDataCw1)
-			{
+	for (i = 0; i < ncBlock2; ++i) {
+		for (j = 0; j < ncDataCw2; ++j) {
+			if (j < ncDataCw1) {
 				m_byAllCodeWord[(ncBlockSum * j) + nBlockNo] = m_byDataCodeWord[nDataCwIndex++];
 			}
-			else
-			{
+			else {
 				// 2 minute fraction block placement event
 				m_byAllCodeWord[(ncBlockSum * ncDataCw1) + i]  = m_byDataCodeWord[nDataCwIndex++];
 			}
 		}
-
 		++nBlockNo;
 	}
 
-
-
 	// RS code words by block number (currently пїЅпїЅ The same number)
 	int ncRSCw1 = QR_VersionInfo[QR_m_nVersion].RS_BlockInfo1[nLevel].ncAllCodeWord - ncDataCw1;
-
-
 	int ncRSCw2 = QR_VersionInfo[QR_m_nVersion].RS_BlockInfo2[nLevel].ncAllCodeWord - ncDataCw2;
 
-
 	// RS code word is calculated
-
 	nDataCwIndex = 0;
 	nBlockNo = 0;
 
-	for (i = 0; i < ncBlock1; ++i)
-	{
+	for (i = 0; i < ncBlock1; ++i) {
 		ZeroMemory(m_byRSWork, sizeof(m_byRSWork));
-
-
 		memmove(m_byRSWork, m_byDataCodeWord + nDataCwIndex, ncDataCw1);
-
 
 		GetRSCodeWord(m_byRSWork, ncDataCw1, ncRSCw1);
 
-
 		// RS code word placement
-		for (j = 0; j < ncRSCw1; ++j)
-		{
+		for (j = 0; j < ncRSCw1; ++j) {
 			m_byAllCodeWord[ncDataCodeWord + (ncBlockSum * j) + nBlockNo] = m_byRSWork[j];
 		}
 
@@ -1925,18 +1866,14 @@ int EncodeData(int nLevel, int nVersion , LPCSTR lpsSource, unsigned sourcelen, 
 		++nBlockNo;
 	}
 
-	for (i = 0; i < ncBlock2; ++i)
-	{
+	for (i = 0; i < ncBlock2; ++i) {
 		ZeroMemory(m_byRSWork, sizeof(m_byRSWork));
-
 		memmove(m_byRSWork, m_byDataCodeWord + nDataCwIndex, ncDataCw2);
 
 		GetRSCodeWord(m_byRSWork, ncDataCw2, ncRSCw2);
 
-
 		// RS code word placement
-		for (j = 0; j < ncRSCw2; ++j)
-		{
+		for (j = 0; j < ncRSCw2; ++j) {
 			m_byAllCodeWord[ncDataCodeWord + (ncBlockSum * j) + nBlockNo] = m_byRSWork[j];
 		}
 
@@ -1946,24 +1883,20 @@ int EncodeData(int nLevel, int nVersion , LPCSTR lpsSource, unsigned sourcelen, 
 
 	m_nSymbolSize = QR_m_nVersion * 4 + 17;
 
-
 	// Module placement
 	FormatModule(m_byModuleData, m_byAllCodeWord);
 
-
-
-	for(i=0;i<m_nSymbolSize;i++){
-		for (j=0;j<m_nSymbolSize;j++){
-                if (!m_byModuleData[i][j]){
-                  putBitToPos((j*m_nSymbolSize)+i+1,0,QR_m_data);
-                }else
-                  putBitToPos((j*m_nSymbolSize)+i+1,1,QR_m_data);}
-
+	for (i=0; i < m_nSymbolSize; i++) {
+		for (j=0; j < m_nSymbolSize; j++) {
+      if (!m_byModuleData[i][j]) {
+        putBitToPos((j*m_nSymbolSize)+i+1,0,QR_m_data);
+      } else {
+        putBitToPos((j*m_nSymbolSize)+i+1,1,QR_m_data);
+      }
+    }
 	}
 
-
 	return m_nSymbolSize;
-
 }
 
 

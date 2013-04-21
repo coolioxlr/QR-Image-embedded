@@ -10,22 +10,17 @@
 #include <string.h>
 #include <stdlib.h>
 
-
-// Constant
-
 // Error correction level
 #define QR_LEVEL_L	0
 #define QR_LEVEL_M	1
 #define QR_LEVEL_Q	2
 #define QR_LEVEL_H	3
 
-
 //Data Mode
 #define QR_MODE_NUMERAL		0
 #define QR_MODE_ALPHABET	1
 #define QR_MODE_8BIT		2
 #define QR_MODE_KANJI		3
-
 
 //Group version (model number)
 #define QR_VERSION_S	0 // 1 ~ 9
