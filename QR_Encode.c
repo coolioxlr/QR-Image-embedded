@@ -1761,7 +1761,7 @@ void putBitToPos(unsigned int pos,int bw,unsigned char *bits)
         }
 }
 
-int EncodeData(int nLevel, int nVersion , LPCSTR lpsSource, int sourcelen, unsigned char QR_m_data[])
+int EncodeData(int nLevel, int nVersion , LPCSTR lpsSource, unsigned sourcelen, unsigned char QR_m_data[])
 {
 
 
