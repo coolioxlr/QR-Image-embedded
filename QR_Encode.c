@@ -670,7 +670,7 @@ BYTE AlphabetToBinary(unsigned char c)
 // APPLICATIONS: Binary Kanji character mode
 // Number of arguments: the target character
 // Returns: binary value
-WORD KanjiToBinaly(WORD wc)
+WORD KanjiToBinary(WORD wc)
 {
 	if (wc >= 0x8140 && wc <= 0x9ffc)
 		wc -= 0x8140;
@@ -1132,7 +1132,7 @@ int EncodeSourceData(LPCSTR lpsSource, int ncLength, int nVerGroup,int m_nBlockL
 			// Save the bit string in character mode
 			for (j = 0; j < m_nBlockLength[i] / 2; ++j)
 			{
-				WORD wBinCode = KanjiToBinaly((WORD)(((BYTE)lpsSource[ncComplete + (j * 2)] << 8) + (BYTE)lpsSource[ncComplete + (j * 2) + 1]));
+				WORD wBinCode = KanjiToBinary((WORD)(((BYTE)lpsSource[ncComplete + (j * 2)] << 8) + (BYTE)lpsSource[ncComplete + (j * 2) + 1]));
 
 				m_ncDataCodeWordBit = SetBitStream(m_ncDataCodeWordBit, wBinCode, 13,m_byDataCodeWord);
 			}
