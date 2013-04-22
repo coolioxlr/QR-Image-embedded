@@ -23,16 +23,38 @@
 #define QR_MODE_KANJI		3
 
 //Group version (model number)
-#define QR_VERSION_S	0 // 1 ~ 9
-#define QR_VERSION_M	1 // 10 ~ 26
-#define QR_VERSION_L	2 // 27 ~ 40
+#define QR_VERSION_XS 0 // 1 ~ 3
+#define QR_VERSION_S  1 // 4 ~ 9
+#define QR_VERSION_M  2 // 10 ~ 26
+#define QR_VERSION_L  3 // 27 ~ 40
 
-#define MAX_ALLCODEWORD	 3706 //The maximum total number of code words
-#define MAX_DATACODEWORD 2956 //Maximum data word code (version 40-L)
+// Choose XS, S, M or L depending on your requirements.
+#define MAX_QR_VERSION QR_VERSION_XS
 
-#define MAX_CODEBLOCK	  153 //(Including RS code word) the maximum number of block data code word
-#define MAX_MODULESIZE	  177 //Maximum number of modules in a side
-#define MAX_BITDATA		 3917 // finfile data
+#if MAX_QR_VERSION == QR_VERSION_XS
+#define MAX_VERSION_NUMBER 3
+#define MAX_DATACODEWORD 55  // Maximum data word code (version 3-L)
+#define MAX_ALLCODEWORD  70
+#define MAX_CODEBLOCK   70
+#elif MAX_QR_VERSION == QR_VERSION_S
+#define MAX_VERSION_NUMBER 9
+#define MAX_DATACODEWORD 232  // Maximum data word code (version 9-L)
+#define MAX_ALLCODEWORD  292
+#define MAX_CODEBLOCK   146
+#elif MAX_QR_VERSION == QR_VERSION_M
+#define MAX_VERSION_NUMBER 26
+#define MAX_DATACODEWORD 1370  // Maximum data word code (version 26-L)
+#define MAX_ALLCODEWORD  1706
+#define MAX_CODEBLOCK   152
+#elif MAX_QR_VERSION == QR_VERSION_L
+#define MAX_VERSION_NUMBER 40
+#define MAX_DATACODEWORD 2956  // Maximum data word code (version 40-L)
+#define MAX_ALLCODEWORD  3706  // The maximum total number of code words
+#define MAX_CODEBLOCK   153 //(Including RS code word) the maximum number of block data code word
+#endif
+
+#define MAX_MODULESIZE ((MAX_VERSION_NUMBER * 4) + 17) // Maximum number of modules in a side
+#define MAX_BITDATA    (((MAX_MODULESIZE * MAX_MODULESIZE) / 8) + 1)
 
 //Margin when drawing a bitmap
 //#define QR_MARGIN	4
@@ -47,7 +69,12 @@ typedef struct tagRS_BLOCKINFO
 	int ncDataCodeWord;	//The number of data code words (the number of code words - the number of RS code word)
 
 } RS_BLOCKINFO, *LPRS_BLOCKINFO;
-
+#define INIT_RS_BLOCK_INFO(RSBlockCount, allCodeWordCount, dataCodewordCount) \
+  { \
+    .ncRSBlock = RSBlockCount, \
+    .ncAllCodeWord = allCodeWordCount, \
+    .ncDataCodeWord = dataCodewordCount \
+  }
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -69,6 +96,19 @@ typedef struct tagQR_VERSIONINFO
 
 } QR_VERSIONINFO, *LPQR_VERSIONINFO;
 
+#define INIT_QR_VERSION(versionNo, allCodeWordCount, dataCW1, dataCW2, dataCW3,dataCW4, \
+                        alignPointCount, alignPoint1, alignPoint2, alignPoint3, alignPoint4, alignPoint5, alignPoint6, \
+                        rsBlockInfo1_1, rsBlockInfo1_2, rsBlockInfo1_3, rsBlockInfo1_4, \
+                        rsBlockInfo2_1, rsBlockInfo2_2, rsBlockInfo2_3, rsBlockInfo2_4) \
+  { \
+    .nVersionNo = versionNo, \
+    .ncAllCodeWord = allCodeWordCount, \
+    .ncDataCodeWord = { dataCW1, dataCW2, dataCW3,dataCW4 }, \
+    .ncAlignPoint = alignPointCount, \
+    .nAlignPoint = { alignPoint1, alignPoint2, alignPoint3, alignPoint4, alignPoint5, alignPoint6 }, \
+    .RS_BlockInfo1 = { rsBlockInfo1_1, rsBlockInfo1_2, rsBlockInfo1_3, rsBlockInfo1_4 }, \
+    .RS_BlockInfo2 = { rsBlockInfo2_1, rsBlockInfo2_2, rsBlockInfo2_3, rsBlockInfo2_4 } \
+  }
 
 typedef unsigned short WORD;
 
