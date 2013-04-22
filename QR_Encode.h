@@ -28,32 +28,39 @@
 #define QR_VERSION_M  2 // 10 ~ 26
 #define QR_VERSION_L  3 // 27 ~ 40
 
-// Choose XS, S, M or L depending on your requirements.
-#define MAX_QR_VERSION QR_VERSION_XS
+// Users should pass -DMAX_REQUIRED_QR_VERSION=X where X is the desired maximum
+// supported QR version. Must be in the range of 1~40.
+#ifndef MAX_REQUIRED_QR_VERSION
+#define MAX_REQUIRED_QR_VERSION 40
+#endif
 
-#if MAX_QR_VERSION == QR_VERSION_XS
-#define MAX_VERSION_NUMBER 3
+#if MAX_REQUIRED_QR_VERSION <= 0
+#error "Minimum QR Version is 1"
+#elif MAX_REQUIRED_QR_VERSION <= 3
+#define MAX_QR_VERSION_GROUP QR_VERSION_XS
 #define MAX_DATACODEWORD 55  // Maximum data word code (version 3-L)
 #define MAX_ALLCODEWORD  70
 #define MAX_CODEBLOCK   70
-#elif MAX_QR_VERSION == QR_VERSION_S
-#define MAX_VERSION_NUMBER 9
+#elif MAX_REQUIRED_QR_VERSION <= 9
+#define MAX_QR_VERSION_GROUP QR_VERSION_S
 #define MAX_DATACODEWORD 232  // Maximum data word code (version 9-L)
 #define MAX_ALLCODEWORD  292
 #define MAX_CODEBLOCK   146
-#elif MAX_QR_VERSION == QR_VERSION_M
-#define MAX_VERSION_NUMBER 26
+#elif MAX_REQUIRED_QR_VERSION <= 26
+#define MAX_QR_VERSION_GROUP QR_VERSION_M
 #define MAX_DATACODEWORD 1370  // Maximum data word code (version 26-L)
 #define MAX_ALLCODEWORD  1706
 #define MAX_CODEBLOCK   152
-#elif MAX_QR_VERSION == QR_VERSION_L
-#define MAX_VERSION_NUMBER 40
+#elif MAX_REQUIRED_QR_VERSION <= 40
+#define MAX_QR_VERSION_GROUP QR_VERSION_L
 #define MAX_DATACODEWORD 2956  // Maximum data word code (version 40-L)
 #define MAX_ALLCODEWORD  3706  // The maximum total number of code words
 #define MAX_CODEBLOCK   153 //(Including RS code word) the maximum number of block data code word
+#else
+#error "Maximum QR Version is 40"
 #endif
 
-#define MAX_MODULESIZE ((MAX_VERSION_NUMBER * 4) + 17) // Maximum number of modules in a side
+#define MAX_MODULESIZE ((MAX_REQUIRED_QR_VERSION * 4) + 17) // Maximum number of modules in a side
 #define MAX_BITDATA    (((MAX_MODULESIZE * MAX_MODULESIZE) / 8) + 1)
 
 //Margin when drawing a bitmap
