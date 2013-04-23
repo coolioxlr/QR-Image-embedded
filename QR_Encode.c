@@ -1551,16 +1551,15 @@ void putBitToPos(unsigned int pos,int bw,unsigned char *bits)
 {
         if(bw==0) return;
         unsigned int tmp;
-        unsigned int bitpos[8]={128,64,32,16,8,4,2,1};
         if (pos%8==0)
         {
                 tmp=(pos/8)-1;
-                bits[tmp]=bits[tmp]^bitpos[7];
+                bits[tmp]=bits[tmp]^0x1;
         }
         else
         {
                 tmp=pos/8;
-                bits[tmp]=bits[tmp]^bitpos[pos%8-1];
+                bits[tmp]=bits[tmp]^(0x80 >> (pos%8-1));
         }
 }
 
