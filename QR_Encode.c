@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include "QR_Encode.h"
 
+#define min(a, b) (a <= b ? a : b)
+
 int m_nLevel;
 int QR_m_nVersion;
 int m_nMaskingNo;
@@ -996,16 +998,6 @@ int GetEncodeVersion(int nVersion, LPCSTR lpsSource, int ncLength,int m_nBlockLe
 	}
 
 	return 0;
-}
-
-
-int min(int a, int b) {
-    if (a<=b) {
-        return a;
-    }
-    else {
-        return b;
-    }
 }
 
 void GetRSCodeWord(LPBYTE lpbyRSWork, int ncDataCodeWord, int ncRSCodeWord)
