@@ -11,16 +11,16 @@
 #include <stdlib.h>
 
 // Error correction level
-#define QR_LEVEL_L	0
-#define QR_LEVEL_M	1
-#define QR_LEVEL_Q	2
-#define QR_LEVEL_H	3
+#define QR_LEVEL_L  0
+#define QR_LEVEL_M  1
+#define QR_LEVEL_Q  2
+#define QR_LEVEL_H  3
 
 //Data Mode
-#define QR_MODE_NUMERAL		0
-#define QR_MODE_ALPHABET	1
-#define QR_MODE_8BIT		2
-#define QR_MODE_KANJI		3
+#define QR_MODE_NUMERAL    0
+#define QR_MODE_ALPHABET   1
+#define QR_MODE_8BIT       2
+#define QR_MODE_KANJI      3
 
 //Group version (model number)
 #define QR_VERSION_XS 0 // 1 ~ 3
@@ -155,18 +155,17 @@
 #define MAX_BITDATA    (((MAX_MODULESIZE * MAX_MODULESIZE) / 8) + 1)
 
 //Margin when drawing a bitmap
-//#define QR_MARGIN	4
+//#define QR_MARGIN  4
 
 
 /////////////////////////////////////////////////////////////////////////////
 
-typedef struct tagRS_BLOCKINFO
-{
-	int ncRSBlock;		//RS block number
-	int ncAllCodeWord;	//The number of codewords in the block
-	int ncDataCodeWord;	//The number of data code words (the number of code words - the number of RS code word)
-
+typedef struct tagRS_BLOCKINFO {
+  int ncRSBlock;    //RS block number
+  int ncAllCodeWord;  //The number of codewords in the block
+  int ncDataCodeWord;  //The number of data code words (the number of code words - the number of RS code word)
 } RS_BLOCKINFO, *LPRS_BLOCKINFO;
+
 #define INIT_RS_BLOCK_INFO(RSBlockCount, allCodeWordCount, dataCodewordCount) \
   { \
     .ncRSBlock = RSBlockCount, \
@@ -174,34 +173,31 @@ typedef struct tagRS_BLOCKINFO
     .ncDataCodeWord = dataCodewordCount \
   }
 
-
 /////////////////////////////////////////////////////////////////////////////
 //Version code-related information (model number)
 
-typedef struct tagQR_VERSIONINFO
-{
-	int nVersionNo;
-	int ncAllCodeWord;
+typedef struct tagQR_VERSIONINFO {
+  int nVersionNo;
+  int ncAllCodeWord;
 
-	// Error correction levels (0 = L, 1 = M, 2 = Q, 3 = H)
-	int ncDataCodeWord[4];	// data len
+  // Error correction levels (0 = L, 1 = M, 2 = Q, 3 = H)
+  int ncDataCodeWord[4];  // data len
 
-	int ncAlignPoint;	// position
-	int nAlignPoint[6];	// numberof
+  int ncAlignPoint;  // position
+  int nAlignPoint[6];  // numberof
 
-	RS_BLOCKINFO RS_BlockInfo1[4]; // EC pos
-	RS_BLOCKINFO RS_BlockInfo2[4]; // EC pos
-
+  RS_BLOCKINFO RS_BlockInfo1[4]; // EC pos
+  RS_BLOCKINFO RS_BlockInfo2[4]; // EC pos
 } QR_VERSIONINFO, *LPQR_VERSIONINFO;
 
-#define INIT_QR_VERSION(versionNo, allCodeWordCount, dataCW1, dataCW2, dataCW3,dataCW4, \
+#define INIT_QR_VERSION(versionNo, allCodeWordCount, dataCW1, dataCW2, dataCW3, dataCW4, \
                         alignPointCount, alignPoint1, alignPoint2, alignPoint3, alignPoint4, alignPoint5, alignPoint6, \
                         rsBlockInfo1_1, rsBlockInfo1_2, rsBlockInfo1_3, rsBlockInfo1_4, \
                         rsBlockInfo2_1, rsBlockInfo2_2, rsBlockInfo2_3, rsBlockInfo2_4) \
   { \
     .nVersionNo = versionNo, \
     .ncAllCodeWord = allCodeWordCount, \
-    .ncDataCodeWord = { dataCW1, dataCW2, dataCW3,dataCW4 }, \
+    .ncDataCodeWord = { dataCW1, dataCW2, dataCW3, dataCW4 }, \
     .ncAlignPoint = alignPointCount, \
     .nAlignPoint = { alignPoint1, alignPoint2, alignPoint3, alignPoint4, alignPoint5, alignPoint6 }, \
     .RS_BlockInfo1 = { rsBlockInfo1_1, rsBlockInfo1_2, rsBlockInfo1_3, rsBlockInfo1_4 }, \
@@ -209,27 +205,9 @@ typedef struct tagQR_VERSIONINFO
   }
 
 typedef unsigned short WORD;
-
 typedef unsigned char BYTE;
-
 typedef BYTE* LPBYTE;
-
 typedef const char* LPCSTR;
 
-#define ZeroMemory(Destination,Length) memset((Destination),0,(Length))
-int EncodeData(int nLevel, int nVersion , LPCSTR lpsSource, unsigned sourcelen,unsigned char QR_m_data[MAX_BITDATA]);
-
-/*nLevel - уровень коррекции ошибок
-#define QR_LEVEL_L	0
-#define QR_LEVEL_M	1
-#define QR_LEVEL_Q	2
-#define QR_LEVEL_H	3
-
-nVersion - версия кода 1 - 40 разрешение итд 0 - автоопределение исходя из размера
-
-lpsSource - данные на вход
-sourcelen - длинна строки 0 - автоопределение, strlen \0 оборвет.
-QR_m_data - массив для записи, пишет в биты.
-
-функция возвращает сторону квадрата.
-*/
+#define ZeroMemory(Destination, Length) memset((Destination), 0, (Length))
+int EncodeData(int nLevel, int nVersion , LPCSTR lpsSource, unsigned sourcelen, unsigned char QR_m_data[MAX_BITDATA]);
