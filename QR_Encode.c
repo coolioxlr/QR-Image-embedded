@@ -1559,15 +1559,19 @@ int EncodeData(int nLevel, int nVersion , LPCSTR lpsSource, unsigned sourcelen, 
 {
 	int i, j;
 	int bAutoExtent=0;
-	BYTE m_byModuleData[MAX_MODULESIZE][MAX_MODULESIZE]; // [x][y]
-	BYTE m_byAllCodeWord[MAX_ALLCODEWORD];
-	int m_nBlockLength[MAX_DATACODEWORD];
+	static BYTE m_byModuleData[MAX_MODULESIZE][MAX_MODULESIZE]; // [x][y]
+	static BYTE m_byAllCodeWord[MAX_ALLCODEWORD];
+	static int m_nBlockLength[MAX_DATACODEWORD];
 	BYTE m_byBlockMode[MAX_DATACODEWORD];
 	BYTE m_byDataCodeWord[MAX_DATACODEWORD];
 	BYTE m_byRSWork[MAX_CODEBLOCK];
 	m_nLevel = nLevel;
 	m_nMaskingNo = -1;
 
+  ZeroMemory(m_byModuleData, MAX_MODULESIZE * MAX_MODULESIZE * sizeof(BYTE));
+  ZeroMemory(m_byAllCodeWord, MAX_ALLCODEWORD * sizeof(BYTE));
+  ZeroMemory(m_nBlockLength, MAX_DATACODEWORD * sizeof(int));
+  
 	if (nVersion > MAX_REQUIRED_QR_VERSION) {
 		  return -1;
 	}

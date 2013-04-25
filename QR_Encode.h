@@ -34,6 +34,9 @@
 #define MAX_REQUIRED_QR_VERSION 40
 #endif
 
+// TODO: define MAX_DATACODEWORD / MAX_ALLCODEWORD / MAX_CODEBLOCK per version
+// rather than per group.
+
 #if MAX_REQUIRED_QR_VERSION <= 0
 #error "Minimum QR Version is 1"
 #elif MAX_REQUIRED_QR_VERSION <= 3
@@ -47,16 +50,98 @@
 #define MAX_DATACODEWORD 80  // Maximum data word code (version 4-L)
 #define MAX_ALLCODEWORD  100
 #define MAX_CODEBLOCK   100
-#else
+#elif MAX_REQUIRED_QR_VERSION == 5
+#define MAX_DATACODEWORD 108  // Maximum data word code (version 5-L)
+#define MAX_ALLCODEWORD  134
+#define MAX_CODEBLOCK   134
+#elif MAX_REQUIRED_QR_VERSION == 6
+#define MAX_DATACODEWORD 136  // Maximum data word code (version 6-L)
+#define MAX_ALLCODEWORD  172
+#define MAX_CODEBLOCK   134
+#elif MAX_REQUIRED_QR_VERSION == 7
+#define MAX_DATACODEWORD 156  // Maximum data word code (version 7-L)
+#define MAX_ALLCODEWORD  196
+#define MAX_CODEBLOCK   134
+#elif MAX_REQUIRED_QR_VERSION == 8
+#define MAX_DATACODEWORD 194  // Maximum data word code (version 8-L)
+#define MAX_ALLCODEWORD  242
+#define MAX_CODEBLOCK   134
+#elif MAX_REQUIRED_QR_VERSION == 9
 #define MAX_DATACODEWORD 232  // Maximum data word code (version 9-L)
 #define MAX_ALLCODEWORD  292
 #define MAX_CODEBLOCK   146
 #endif
 #elif MAX_REQUIRED_QR_VERSION <= 26
 #define MAX_QR_VERSION_GROUP QR_VERSION_M
+#if MAX_REQUIRED_QR_VERSION == 10
+#define MAX_DATACODEWORD 274  // Maximum data word code (version 10-L)
+#define MAX_ALLCODEWORD  346
+#define MAX_CODEBLOCK   146
+#elif MAX_REQUIRED_QR_VERSION == 11
+#define MAX_DATACODEWORD 324  // Maximum data word code (version 11-L)
+#define MAX_ALLCODEWORD  404
+#define MAX_CODEBLOCK   146
+#elif MAX_REQUIRED_QR_VERSION == 12
+#define MAX_DATACODEWORD 370  // Maximum data word code (version 12-L)
+#define MAX_ALLCODEWORD  466
+#define MAX_CODEBLOCK   146
+#elif MAX_REQUIRED_QR_VERSION == 13
+#define MAX_DATACODEWORD 428  // Maximum data word code (version 13-L)
+#define MAX_ALLCODEWORD  532
+#define MAX_CODEBLOCK   146
+#elif MAX_REQUIRED_QR_VERSION == 14
+#define MAX_DATACODEWORD 461  // Maximum data word code (version 14-L)
+#define MAX_ALLCODEWORD  581
+#define MAX_CODEBLOCK   146
+#elif MAX_REQUIRED_QR_VERSION == 15
+#define MAX_DATACODEWORD 523  // Maximum data word code (version 15-L)
+#define MAX_ALLCODEWORD  655
+#define MAX_CODEBLOCK   146
+#elif MAX_REQUIRED_QR_VERSION == 16
+#define MAX_DATACODEWORD 589  // Maximum data word code (version 16-L)
+#define MAX_ALLCODEWORD  733
+#define MAX_CODEBLOCK   146
+#elif MAX_REQUIRED_QR_VERSION == 17
+#define MAX_DATACODEWORD 647  // Maximum data word code (version 17-L)
+#define MAX_ALLCODEWORD  815
+#define MAX_CODEBLOCK   146
+#elif MAX_REQUIRED_QR_VERSION == 18
+#define MAX_DATACODEWORD 721  // Maximum data word code (version 18-L)
+#define MAX_ALLCODEWORD  901
+#define MAX_CODEBLOCK   151
+#elif MAX_REQUIRED_QR_VERSION == 19
+#define MAX_DATACODEWORD 795  // Maximum data word code (version 19-L)
+#define MAX_ALLCODEWORD  991
+#define MAX_CODEBLOCK   151
+#elif MAX_REQUIRED_QR_VERSION == 20
+#define MAX_DATACODEWORD 861  // Maximum data word code (version 20-L)
+#define MAX_ALLCODEWORD  1085
+#define MAX_CODEBLOCK   151
+#elif MAX_REQUIRED_QR_VERSION == 21
+#define MAX_DATACODEWORD 932  // Maximum data word code (version 21-L)
+#define MAX_ALLCODEWORD  1156
+#define MAX_CODEBLOCK   151
+#elif MAX_REQUIRED_QR_VERSION == 22
+#define MAX_DATACODEWORD 1006  // Maximum data word code (version 22-L)
+#define MAX_ALLCODEWORD  1258
+#define MAX_CODEBLOCK   151
+#elif MAX_REQUIRED_QR_VERSION == 23
+#define MAX_DATACODEWORD 1094  // Maximum data word code (version 23-L)
+#define MAX_ALLCODEWORD  1354
+#define MAX_CODEBLOCK   152
+#elif MAX_REQUIRED_QR_VERSION == 24
+#define MAX_DATACODEWORD 1174  // Maximum data word code (version 24-L)
+#define MAX_ALLCODEWORD  1474
+#define MAX_CODEBLOCK   152
+#elif MAX_REQUIRED_QR_VERSION == 25
+#define MAX_DATACODEWORD 1276  // Maximum data word code (version 25-L)
+#define MAX_ALLCODEWORD  1588
+#define MAX_CODEBLOCK   152
+#else
 #define MAX_DATACODEWORD 1370  // Maximum data word code (version 26-L)
 #define MAX_ALLCODEWORD  1706
 #define MAX_CODEBLOCK   152
+#endif
 #elif MAX_REQUIRED_QR_VERSION <= 40
 #define MAX_QR_VERSION_GROUP QR_VERSION_L
 #define MAX_DATACODEWORD 2956  // Maximum data word code (version 40-L)
