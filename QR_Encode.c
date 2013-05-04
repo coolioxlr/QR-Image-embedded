@@ -389,7 +389,6 @@ int IsNumeralData(unsigned char c) {
 // APPLICATIONS: Check the appropriate alphanumeric mode
 // Argument: research letter
 // Returns: = true if applicable
-
 int IsAlphabetData(unsigned char c) {
   if (c >= '0' && c <= '9')
     return 1;
@@ -411,24 +410,20 @@ int IsAlphabetData(unsigned char c) {
 // Arguments: The character study (16-bit characters)
 // Returns: = true if applicable
 // Remarks: S-JIS is excluded since the EBBFh
-
 int IsKanjiData(unsigned char c1, unsigned char c2) {
   if (((c1 >= 0x81 && c1 <= 0x9f) || (c1 >= 0xe0 && c1 <= 0xeb)) && (c2 >= 0x40)) {
-    if ((c1 == 0x9f && c2 > 0xfc) || (c1 == 0xeb && c2 > 0xbf))
+    if ((c1 == 0x9f && c2 > 0xfc) || (c1 == 0xeb && c2 > 0xbf)) {
       return 0;
-
+    }
     return 1;
   }
-
   return 0;
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 // APPLICATIONS: Binary character alphanumeric mode
 // Number of arguments: the target character
 // Returns: binary value
-
 BYTE AlphabetToBinary(unsigned char c) {
   if (c >= '0' && c <= '9') return (unsigned char)(c - '0');
 
@@ -454,7 +449,6 @@ BYTE AlphabetToBinary(unsigned char c) {
 
   return 44; // c == ':'
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 // APPLICATIONS: Binary Kanji character mode
@@ -490,34 +484,33 @@ int GetBitLength(BYTE nMode, int ncData, int nVerGroup) {
 
   switch (nMode) {
     case QR_MODE_NUMERAL:
-    ncBits = 4 + nIndicatorLenNumeral[nVerGroup] + (10 * (ncData / 3));
-    switch (ncData % 3) {
-      case 1:
-      ncBits += 4;
-      break;
-      case 2:
-      ncBits += 7;
-      break;
-    default: // case 0:
+      ncBits = 4 + nIndicatorLenNumeral[nVerGroup] + (10 * (ncData / 3));
+      switch (ncData % 3) {
+        case 1:
+          ncBits += 4;
+          break;
+        case 2:
+          ncBits += 7;
+          break;
+        default: // case 0:
+          break;
+      }
     break;
+
+    case QR_MODE_ALPHABET:
+      ncBits = 4 + nIndicatorLenAlphabet[nVerGroup] + (11 * (ncData / 2)) + (6 * (ncData % 2));
+      break;
+
+    case QR_MODE_8BIT:
+      ncBits = 4 + nIndicatorLen8Bit[nVerGroup] + (8 * ncData);
+      break;
+
+    default: // case QR_MODE_KANJI:
+      ncBits = 4 + nIndicatorLenKanji[nVerGroup] + (13 * (ncData / 2));
+      break;
   }
 
-  break;
-
-  case QR_MODE_ALPHABET:
-  ncBits = 4 + nIndicatorLenAlphabet[nVerGroup] + (11 * (ncData / 2)) + (6 * (ncData % 2));
-  break;
-
-  case QR_MODE_8BIT:
-  ncBits = 4 + nIndicatorLen8Bit[nVerGroup] + (8 * ncData);
-  break;
-
-  default: // case QR_MODE_KANJI:
-  ncBits = 4 + nIndicatorLenKanji[nVerGroup] + (13 * (ncData / 2));
-  break;
-}
-
-return ncBits;
+  return ncBits;
 }
 
 int EncodeSourceData(LPCSTR lpsSource, int ncLength, int nVerGroup, int m_nBlockLength[MAX_DATACODEWORD], BYTE m_byBlockMode[MAX_DATACODEWORD], BYTE m_byDataCodeWord[MAX_DATACODEWORD]) {
@@ -855,12 +848,11 @@ int EncodeSourceData(LPCSTR lpsSource, int ncLength, int nVerGroup, int m_nBlock
 // Args: data mode type, data length, group version (model number)
 // Returns: data bit length
 // Remarks: data length of argument in Kanji mode is the number of bytes, not characters
-
 int GetEncodeVersion(int nVersion, LPCSTR lpsSource, int ncLength, int m_nBlockLength[MAX_DATACODEWORD], BYTE m_byBlockMode[MAX_DATACODEWORD], BYTE m_byDataCodeWord[MAX_DATACODEWORD]) {
   int nVerGroup = nVersion >= 27 ? QR_VERSION_L : (nVersion >= 10 ? QR_VERSION_M : (nVersion >= 4 ? QR_VERSION_S : QR_VERSION_XS));
   int i, j;
 
-  for (i = nVerGroup; i <= QR_VERSION_L; ++i) {
+  for (i = nVerGroup; i <= MAX_QR_VERSION_GROUP; ++i) {
     if (EncodeSourceData(lpsSource, ncLength, i, m_nBlockLength, m_byBlockMode, m_byDataCodeWord)) {
 #if MAX_QR_VERSION_GROUP >= QR_VERSION_XS
       if (i == QR_VERSION_XS) {
@@ -910,7 +902,6 @@ void GetRSCodeWord(LPBYTE lpbyRSWork, int ncDataCodeWord, int ncRSCodeWord) {
       for (j = 0; j < ncRSCodeWord; ++j) {
         //Add (% 255  ^ 255 = 1) the first term multiplier to multiplier sections
         BYTE nExpElement = (BYTE)(((int)(byRSExp[ncRSCodeWord][j] + nExpFirst)) % 255);
-
 
         //Surplus calculated by the exclusive
         lpbyRSWork[j] = (BYTE)(lpbyRSWork[j + 1] ^ byExpToInt[nExpElement]);
@@ -1324,7 +1315,7 @@ void FormatModule(BYTE m_byModuleData[MAX_MODULESIZE][MAX_MODULESIZE], BYTE m_by
   SetCodeWordPattern(m_byModuleData, m_byAllCodeWord);
 
   if (m_nMaskingNo == -1) {
-    //Select the best pattern masking
+    // Select the best pattern masking
     m_nMaskingNo = 0;
 
     SetMaskingPattern(m_nMaskingNo, m_byModuleData);     // Masking
@@ -1349,7 +1340,6 @@ void FormatModule(BYTE m_byModuleData[MAX_MODULESIZE][MAX_MODULESIZE], BYTE m_by
   SetFormatInfoPattern(m_nMaskingNo, m_byModuleData); // Placement pattern format information
 
   // The module pattern converted to a Boolean value
-
   for (i = 0; i < m_nSymbolSize; ++i) {
     for (j = 0; j < m_nSymbolSize; ++j) {
       m_byModuleData[i][j] = (BYTE)((m_byModuleData[i][j] & 0x11) != 0);
